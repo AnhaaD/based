@@ -1,125 +1,111 @@
-// import { Decimal, Markets } from '@openware/components';
-
+// import { Decimal, Markets } from '../../../../openware';
 import classnames from 'classnames';
-
 import * as React from 'react';
-
 import { connect } from 'react-redux';
+import { RootState } from '../../../../modules';
+import {
+    Market,
+    selectMarkets,
+} from '../../../../modules/public/markets';
 
-import { selectMarkets, } from '../../../../modules/public/markets';
-
-export class MarketsTabsComponent extends React.Component {
-
-    constructor(props) {
-
-        super(props);
-
-        this.state = {
-
-            selectedItem: 0,
-
-            scrollLeft: 0,
-
-        };
-
-        this.fastSearchButtons = () => {
-
-            const { markets } = this.props;
-
-            let listOfQuote = ['All'];
-
-            if (markets.length > 0) {
-
-                listOfQuote = markets.reduce(this.quoteCurrencies, listOfQuote);
-
-            }
-
-            return (React.createElement("div", { className: "pg-trading-header-fast-search-container", onWheel: this.handleOnMouseWheel, ref: this.tabsRef }, listOfQuote.map(this.renderFastSearchButton)));
-
-        };
-
-        this.renderFastSearchButton = (item, index) => {
-
-            const classname = classnames('pg-trading-header-fast-search-button', {
-
-                'pg-trading-header-fast-search-button-active': this.state.selectedItem === index,
-
-            });
-
-            return (
-
-
-
-            React.createElement("div", { className: classname, key: index, onClick: () => this.handleSelectButton(index) }, item));
-
-        };
-
-        this.handleOnMouseWheel = (event) => {
-
-            this.tabsRef.current.scrollLeft += event.deltaX;
-
-        };
-
-        this.handleSelectButton = (index) => {
-
-            this.setState({
-
-                selectedItem: index,
-
-            }, () => {
-
-                if (this.props.onSelect) {
-
-                    const { markets } = this.props;
-
-                    let listOfQuote = ['All'];
-
-                    if (markets.length > 0) {
-
-                        listOfQuote = markets.reduce(this.quoteCurrencies, listOfQuote);
-
-                    }
-
-                    this.props.onSelect(listOfQuote[this.state.selectedItem]);
-
-                }
-
-            });
-
-        };
-
-        this.quoteCurrencies = (pV, cV) => {
-
-            const [, quote] = cV.name.split('/');
-
-            if (pV.indexOf(quote) === -1) {
-
-                pV.push(quote);
-
-            }
-
-            return pV;
-
-        };
-
-        this.tabsRef = React.createRef();
-
-    }
-
-    render() {
-
-        return this.fastSearchButtons();
-
-    }
-
+interface ReduxProps {
+    markets: Market[];
 }
 
-const mapStateToProps = (state) => ({
+interface OwnProps {
+    onSelect?: (value: string) => void;
+}
 
+interface State {
+    selectedItem: number;
+    scrollLeft: number;
+}
+
+type Props = ReduxProps & OwnProps;
+
+export class MarketsTabsComponent extends React.Component<Props, State> {
+
+    public readonly state = {
+        selectedItem: 0,
+        scrollLeft: 0,
+    };
+
+    public constructor(props) {
+        super(props);
+        this.tabsRef = React.createRef();
+    }
+
+    private tabsRef;
+
+    public render() {
+        return this.fastSearchButtons();
+    }
+
+    private fastSearchButtons = () => {
+        const { markets } = this.props;
+        let listOfQuote: string[] = ['All'];
+        if (markets.length > 0) {
+            listOfQuote = markets.reduce(this.quoteCurrencies, listOfQuote);
+        }
+        return (
+            <div className="pg-trading-header-fast-search-container" onWheel={this.handleOnMouseWheel} ref={this.tabsRef}>
+                {listOfQuote.map(this.renderFastSearchButton)}
+            </div>
+        );
+    }
+
+    private renderFastSearchButton = (item: string, index: number) => {
+        const classname = classnames('pg-trading-header-fast-search-button', {
+            'pg-trading-header-fast-search-button-active': this.state.selectedItem === index,
+        });
+        return (
+            //tslint:disable-next-line
+            <div className={classname} key={index} onClick={() => this.handleSelectButton(index)}>
+                {item}
+            </div>
+        );
+    }
+
+    private handleOnMouseWheel = (event: React.WheelEvent) => {
+        this.tabsRef.current.scrollLeft += event.deltaX;
+    }
+
+    private handleSelectButton = (index: number) => {
+        this.setState({
+            selectedItem: index,
+        }, () => {
+            if (this.props.onSelect) {
+                const { markets } = this.props;
+                let listOfQuote: string[] = ['All'];
+                if (markets.length > 0) {
+                    listOfQuote = markets.reduce(this.quoteCurrencies, listOfQuote);
+                }
+                this.props.onSelect(listOfQuote[this.state.selectedItem]);
+            }
+        });
+    }
+
+    private quoteCurrencies = (pV: string[], cV: Market) => {
+        const [, quote] = cV.name.split('/');
+        if (pV.indexOf(quote) === -1) {
+            pV.push(quote);
+        }
+        return pV;
+    }
+}
+
+const mapStateToProps = (state: RootState): ReduxProps => ({
     markets: selectMarkets(state),
-
 });
 
+//tslint:disable-next-line:no-any
+export const MarketsTabs = connect(mapStateToProps, {})(MarketsTabsComponent) as any;
 
 
-export const MarketsTabs = connect(mapStateToProps, {})(MarketsTabsComponent);
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/ToolBar/MarketSelector/MarketsTabs/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/ToolBar/MarketSelector/MarketsTabs/index.tsx
