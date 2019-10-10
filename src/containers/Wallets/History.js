@@ -1,199 +1,176 @@
-import { Decimal, Pagination, } from '@openware/components';
-
 import * as moment from 'moment';
-
 import * as React from 'react';
-
-import { injectIntl, } from 'react-intl';
-
-import { connect } from 'react-redux';
-
-import { History } from '../../components';
-
+import {
+    InjectedIntlProps,
+    injectIntl,
+} from 'react-intl';
+import { connect, MapDispatchToPropsFunction } from 'react-redux';
+import { History, WalletItemProps } from '../../components';
 import { localeDate } from '../../helpers';
-
-import { fetchHistory, resetHistory, selectCurrentPage, selectFirstElemIndex, selectFullHistory, selectHistory, selectHistoryLoading, selectLastElemIndex, selectNextPageExists, selectPageCount, selectWallets, } from '../../modules';
-
+import {
+    fetchHistory,
+    resetHistory,
+    RootState,
+    selectCurrentPage,
+    selectFirstElemIndex,
+    selectFullHistory,
+    selectHistory,
+    selectHistoryLoading,
+    selectLastElemIndex,
+    selectNextPageExists,
+    selectPageCount,
+    selectWallets,
+    WalletHistoryList,
+} from '../../modules';
+import { Decimal, Pagination } from '../../openware';
 import { FailIcon } from './FailIcon';
-
 import { SucceedIcon } from './SucceedIcon';
 
-export class WalletTable extends React.Component {
+export interface HistoryProps {
+    label: string;
+    type: string;
+    currency: string;
+}
 
-    constructor() {
+export interface ReduxProps {
+    list: WalletHistoryList;
+    wallets: WalletItemProps[];
+    fetching: boolean;
+    fullHistory: number;
+    page: number;
+    pageCount: number;
+    firstElemIndex: number;
+    lastElemIndex: number;
+    nextPageExists: boolean;
+}
 
-        super(...arguments);
+interface DispatchProps {
+    fetchHistory: typeof fetchHistory;
+    resetHistory: typeof resetHistory;
+}
 
-        this.getHeaders = (label) => [
+export type Props = HistoryProps & ReduxProps & DispatchProps & InjectedIntlProps;
 
-            this.props.intl.formatMessage({ id: `page.body.history.${label}.header.date` }),
-
-            this.props.intl.formatMessage({ id: `page.body.history.${label}.header.status` }),
-
-            this.props.intl.formatMessage({ id: `page.body.history.${label}.header.amount` }),
-
-        ];
-
-        this.onClickPrevPage = () => {
-
-            const { page, type, currency } = this.props;
-
-            this.props.fetchHistory({ page: Number(page) - 1, currency, type, limit: 6 });
-
-        };
-
-        this.onClickNextPage = () => {
-
-            const { page, type, currency } = this.props;
-
-            this.props.fetchHistory({ page: Number(page) + 1, currency, type, limit: 6 });
-
-        };
-
-        this.retrieveData = (list) => {
-
-            const { fixed } = this.props.wallets.find(w => w.currency === this.props.currency) || { fixed: 8 };
-
-            if (list.length === 0) {
-
-                return [[this.props.intl.formatMessage({ id: 'page.noDataToShow' }), '', '']];
-
-            }
-
-            return list.sort((a, b) => {
-
-                return moment(localeDate(a.created_at), 'DD/MM HH:mm') > moment(localeDate(b.created_at), 'DD/MM HH:mm') ? -1 : 1;
-
-            }).map((item, index) => {
-
-                const amount = 'amount' in item ? Number(item.amount) : Number(item.price) * Number(item.volume);
-
-                const state = 'state' in item ? this.formatTxState(item.state) : '';
-
-                return [
-
-                    moment(item.created_at).format('DD-MM YYYY'),
-
-                    state,
-
-                    React.createElement(Decimal, { key: index, fixed: fixed }, amount),
-
-                ];
-
-            });
-
-        };
-
-        this.formatTxState = (tx) => {
-
-            const statusMapping = {
-
-                succeed: React.createElement(SucceedIcon, null),
-
-                failed: React.createElement(FailIcon, null),
-
-                accepted: React.createElement(SucceedIcon, null),
-
-                collected: React.createElement(SucceedIcon, null),
-
-                canceled: React.createElement(FailIcon, null),
-
-                rejected: React.createElement(FailIcon, null),
-
-                processing: this.props.intl.formatMessage({ id: 'page.body.wallets.table.pending' }),
-
-                prepared: this.props.intl.formatMessage({ id: 'page.body.wallets.table.pending' }),
-
-                submitted: this.props.intl.formatMessage({ id: 'page.body.wallets.table.pending' }),
-
-                skipped: React.createElement(SucceedIcon, null),
-
-            };
-
-            return statusMapping[tx];
-
-        };
-
-    }
-
-    componentDidMount() {
-
+export class WalletTable extends React.Component<Props> {
+    public componentDidMount() {
         const { type, currency } = this.props;
-
         this.props.fetchHistory({ page: 0, currency, type, limit: 6 });
-
     }
 
-    componentWillReceiveProps(nextProps) {
-
+    public componentWillReceiveProps(nextProps) {
         const { type, currency } = this.props;
-
         if (nextProps.currency !== currency || nextProps.type !== type) {
-
             this.props.resetHistory();
-
             this.props.fetchHistory({ page: 0, currency: nextProps.currency, type, limit: 6 });
-
         }
-
     }
 
-    componentWillUnmount() {
-
+    public componentWillUnmount() {
         this.props.resetHistory();
-
     }
 
-    render() {
-
+    public render() {
         const { label, list, fullHistory, firstElemIndex, lastElemIndex, page, nextPageExists } = this.props;
 
         if (!list.length) {
-
             return null;
-
         }
-
-        return (React.createElement("div", { className: "pg-history-elem__wallet" },
-
-            React.createElement("div", { className: "pg-history-elem__label" }, this.props.intl.formatMessage({ id: `page.body.history.${label}` })),
-
-            React.createElement(History, { headers: this.getHeaders(label), data: this.retrieveData(list) }),
-
-            React.createElement(Pagination, { firstElemIndex: firstElemIndex, lastElemIndex: lastElemIndex, total: fullHistory, page: page, nextPageExists: nextPageExists, onClickPrevPage: this.onClickPrevPage, onClickNextPage: this.onClickNextPage })));
-
+        return (
+            <div className="pg-history-elem__wallet">
+                <div className="pg-history-elem__label">
+                    {this.props.intl.formatMessage({ id: `page.body.history.${label}` })}
+                </div>
+                <History headers={this.getHeaders(label)} data={this.retrieveData(list)} />
+                <Pagination
+                    firstElemIndex={firstElemIndex}
+                    lastElemIndex={lastElemIndex}
+                    total={fullHistory}
+                    page={page}
+                    nextPageExists={nextPageExists}
+                    onClickPrevPage={this.onClickPrevPage}
+                    onClickNextPage={this.onClickNextPage}
+                />
+            </div>
+        );
     }
 
+    private getHeaders = (label: string) => [
+        this.props.intl.formatMessage({ id: `page.body.history.${label}.header.date` }),
+        this.props.intl.formatMessage({ id: `page.body.history.${label}.header.status` }),
+        this.props.intl.formatMessage({ id: `page.body.history.${label}.header.amount` }),
+    ];
+
+    private onClickPrevPage = () => {
+        const { page, type, currency } = this.props;
+        this.props.fetchHistory({ page: Number(page) - 1, currency, type, limit: 6 });
+    };
+
+    private onClickNextPage = () => {
+        const { page, type, currency } = this.props;
+        this.props.fetchHistory({ page: Number(page) + 1, currency, type, limit: 6 });
+    };
+
+    private retrieveData = (list: WalletHistoryList) => {
+        const { fixed } = this.props.wallets.find(w => w.currency === this.props.currency) || { fixed: 8 };
+        if (list.length === 0) {
+            return [[this.props.intl.formatMessage({ id: 'page.noDataToShow' }), '', '']];
+        }
+        return list.sort((a, b) => {
+            return moment(localeDate(a.created_at, 'shortDate'), 'DD/MM HH:mm') > moment(localeDate(b.created_at, 'shortDate'), 'DD/MM HH:mm') ? -1 : 1;
+        }).map((item, index) => {
+            const amount = 'amount' in item ? Number(item.amount) : Number(item.price) * Number(item.volume);
+            const state = 'state' in item ? this.formatTxState(item.state) : '';
+            return [
+                moment(item.created_at).format('DD-MM YYYY'),
+                state,
+                <Decimal key={index} fixed={fixed}>{amount}</Decimal>,
+            ];
+        });
+    };
+
+    private formatTxState = (tx: string) => {
+        const statusMapping = {
+            succeed: <SucceedIcon />,
+            failed: <FailIcon />,
+            accepted: <SucceedIcon />,
+            collected: <SucceedIcon />,
+            canceled: <FailIcon />,
+            rejected: <FailIcon />,
+            processing: this.props.intl.formatMessage({ id: 'page.body.wallets.table.pending' }),
+            prepared: this.props.intl.formatMessage({ id: 'page.body.wallets.table.pending' }),
+            submitted: this.props.intl.formatMessage({ id: 'page.body.wallets.table.pending' }),
+            skipped: <SucceedIcon />,
+        };
+        return statusMapping[tx];
+    };
 }
 
-export const mapStateToProps = (state) => ({
 
+export const mapStateToProps = (state: RootState): ReduxProps => ({
     list: selectHistory(state),
-
     wallets: selectWallets(state),
-
     fetching: selectHistoryLoading(state),
-
     fullHistory: selectFullHistory(state),
-
     page: selectCurrentPage(state),
-
     pageCount: selectPageCount(state, 6),
-
     firstElemIndex: selectFirstElemIndex(state, 6),
-
     lastElemIndex: selectLastElemIndex(state, 6),
-
     nextPageExists: selectNextPageExists(state, 6),
-
 });
 
-export const mapDispatchToProps = dispatch => ({
-
-    fetchHistory: params => dispatch(fetchHistory(params)),
-
-    resetHistory: () => dispatch(resetHistory()),
-
-});
+export const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
+    dispatch => ({
+        fetchHistory: params => dispatch(fetchHistory(params)),
+        resetHistory: () => dispatch(resetHistory()),
+    });
 
 export const WalletHistory = injectIntl(connect(mapStateToProps, mapDispatchToProps)(WalletTable));
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/Wallets/History.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/Wallets/History.tsx
