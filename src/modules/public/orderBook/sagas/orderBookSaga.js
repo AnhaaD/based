@@ -1,37 +1,35 @@
+// tslint:disable-next-line
 import { call, put } from 'redux-saga/effects';
+import { API, RequestOptions } from '../../../../api';
+import {
+  orderBookData,
+  orderBookError,
+  OrderBookFetch,
+} from '../actions';
 
-import { API } from '../../../../api';
-
-import { orderBookData, orderBookError, } from '../actions';
-
-const orderBookOptions = {
-
-    apiVersion: 'peatio',
-
+const orderBookOptions: RequestOptions = {
+  apiVersion: 'peatio',
 };
 
-export function* orderBookSaga(action) {
-
+export function* orderBookSaga(action: OrderBookFetch) {
     try {
-
         const market = action.payload;
-
         if (!market.id) {
-
             throw new Error(`ERROR: Empty market provided to orderBookSaga`);
-
         }
 
         const orderBook = yield call(API.get(orderBookOptions), `/public/markets/${market.id}/order-book`);
-
         yield put(orderBookData(orderBook));
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
         yield put(orderBookError(error));
-
     }
-
 }
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/public/orderBook/sagas/orderBookSaga.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/public/orderBook/sagas/orderBookSaga.ts
