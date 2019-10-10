@@ -1,59 +1,79 @@
 import * as React from 'react';
-
-import { connect, } from 'react-redux';
-
+import {
+    connect,
+    MapDispatchToPropsFunction,
+    MapStateToProps,
+} from 'react-redux';
 import { Redirect } from 'react-router';
+import {
+    changeLanguage,
+    RootState,
+    selectEmailVerified,
+    verificationFetch,
+} from '../modules';
+import { CommonError } from '../modules/types';
 
-import { changeLanguage, selectEmailVerified, verificationFetch, } from '../modules';
-
-export const extractToken = (props) => new URLSearchParams(props.location.search).get('confirmation_token');
-
-export const extractLang = (props) => new URLSearchParams(props.location.search).get('lang');
-
-class Verification extends React.Component {
-
-    componentDidMount() {
-
-        const token = extractToken(this.props);
-
-        const lang = extractLang(this.props);
-
-        if (token) {
-
-            this.props.verification({ token });
-
-        }
-
-        if (lang) {
-
-            this.props.changeLanguage(lang.toLowerCase());
-
-        }
-
-    }
-
-    render() {
-
-        return (React.createElement(Redirect, { to: '/signin' }));
-
-    }
-
+interface DispatchProps {
+    verification: typeof verificationFetch;
+    changeLanguage: typeof changeLanguage;
 }
 
-const mapStateToProps = state => ({
+interface ReduxProps {
+    isEmailVerified?: boolean;
+    error?: CommonError;
+}
 
+export interface RouterProps {
+    location: {
+        search: string;
+    };
+}
+
+type Props = DispatchProps & RouterProps & ReduxProps;
+
+export const extractToken = (props: RouterProps) => new URLSearchParams(props.location.search).get('confirmation_token');
+export const extractLang = (props: RouterProps) => new URLSearchParams(props.location.search).get('lang');
+
+class Verification extends React.Component<Props> {
+    public componentDidMount() {
+        const token = extractToken(this.props);
+        const lang = extractLang(this.props);
+        if (token) {
+            this.props.verification({ token });
+        }
+        if (lang) {
+            this.props.changeLanguage(lang.toLowerCase());
+        }
+    }
+
+    public render() {
+        return (
+            <Redirect to={'/signin'} />
+        );
+    }
+}
+
+const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> = state => ({
     isEmailVerified: selectEmailVerified(state),
-
 });
 
-const mapDispatchToProps = dispatch => ({
-
-    verification: data => dispatch(verificationFetch(data)),
-
-    changeLanguage: lang => dispatch(changeLanguage(lang)),
-
-});
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
+    dispatch => ({
+        verification: data => dispatch(verificationFetch(data)),
+        changeLanguage: lang => dispatch(changeLanguage(lang)),
+    });
 
 const VerificationScreen = connect(mapStateToProps, mapDispatchToProps)(Verification);
 
-export { VerificationScreen, };
+export {
+    VerificationScreen,
+};
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/screens/VerificationScreen.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/screens/VerificationScreen.tsx
