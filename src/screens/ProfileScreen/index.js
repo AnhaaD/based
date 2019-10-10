@@ -1,87 +1,74 @@
 import * as React from 'react';
-
 import { FormattedMessage } from 'react-intl';
-
+import { RouterProps } from 'react-router';
 import { withRouter } from 'react-router-dom';
-
 import { ProfileAccountActivity } from '../../containers/ProfileAccountActivity';
-
 import { ProfileApiKeys } from '../../containers/ProfileApiKeys';
-
 import { ProfileAuthDetails } from '../../containers/ProfileAuthDetails';
-
 import { ProfileVerification } from '../../containers/ProfileVerification';
-
 import { ReferralProgram } from '../../containers/ReferralProgram';
-
 import { setDocumentTitle } from '../../helpers';
 
-class ProfileComponent extends React.Component {
+class ProfileComponent extends React.Component<RouterProps> {
 
-    constructor() {
-
-        super(...arguments);
-
-        this.goBack = () => {
-
-            this.props.history.goBack();
-
-        };
-
-    }
-
-    componentDidMount() {
-
+    public componentDidMount() {
         setDocumentTitle('Profile');
-
     }
 
-    render() {
+    public goBack = () => {
+        this.props.history.goBack();
+    };
 
-        return (React.createElement("div", { className: "container pg-profile-page" },
-
-            React.createElement("div", { className: "pg-profile-page__details" },
-
-                React.createElement("div", { className: "row pg-profile-page-header pg-profile-page-header-first" },
-
-                    React.createElement("h3", { className: "col-12" },
-
-                        React.createElement(FormattedMessage, { id: "page.body.profile.header.account" }))),
-
-                React.createElement("div", { className: "row" },
-
-                    React.createElement("div", { className: "col-12 col-md-6 mx-0" },
-
-                        React.createElement("div", { className: "row col-12 mx-0" },
-
-                            React.createElement(ProfileAuthDetails, null))),
-
-                    React.createElement("div", { className: "col-12 col-md-6" },
-
-                        React.createElement(ProfileVerification, null))),
-
-                React.createElement("div", { className: "row px-4" },
-
-                    React.createElement("div", { className: "col-12 mx-0" },
-
-                        React.createElement(ReferralProgram, null)))),
-
-            React.createElement("div", { className: "row" },
-
-                React.createElement("div", { className: "col-12" },
-
-                    React.createElement(ProfileApiKeys, null)),
-
-                React.createElement("div", { className: "col-12" },
-
-                    React.createElement(ProfileAccountActivity, null)))));
-
+    public render() {
+        return (
+            <div className="container pg-profile-page">
+                <div className="pg-profile-page__details">
+                    <div className="row pg-profile-page-header pg-profile-page-header-first">
+                        <h3 className="col-12">
+                            <FormattedMessage id="page.body.profile.header.account"/>
+                        </h3>
+                    </div>
+                    <div className="row">
+                        <div className="col-12 col-md-6 mx-0">
+                            <div className="row col-12 mx-0">
+                                <ProfileAuthDetails/>
+                            </div>
+                        </div>
+                        <div className="col-12 col-md-6">
+                            <ProfileVerification/>
+                        </div>
+                    </div>
+                    <div className="row px-4">
+                        <div className="col-12 mx-0">
+                            <ReferralProgram/>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <ProfileApiKeys/>
+                    </div>
+                    <div className="col-12">
+                        <ProfileAccountActivity/>
+                    </div>
+                </div>
+            </div>
+        );
     }
-
 }
 
+// tslint:disable-next-line:no-any
+const ProfileScreen = withRouter(ProfileComponent as any);
+
+export {
+    ProfileScreen,
+};
 
 
-const ProfileScreen = withRouter(ProfileComponent);
+// WEBPACK FOOTER //
+// src/drone/src/src/screens/ProfileScreen/index.tsx
 
-export { ProfileScreen, };
+
+
+// WEBPACK FOOTER //
+// ./src/screens/ProfileScreen/index.tsx
