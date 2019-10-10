@@ -1,43 +1,32 @@
+// tslint:disable-next-line
 import { call, put } from 'redux-saga/effects';
-
-import { API } from '../../../../api';
-
+import { API, RequestOptions } from '../../../../api';
 import { alertPush } from '../../../public/alert';
+import { apiKeys2FAModal, apiKeyUpdate, ApiKeyUpdateFetch } from '../actions';
 
-import { apiKeys2FAModal, apiKeyUpdate } from '../actions';
-
-const updateOptions = {
-
+const updateOptions: RequestOptions = {
     apiVersion: 'barong',
-
 };
 
-export function* apiKeyUpdateSaga(action) {
-
+export function* apiKeyUpdateSaga(action: ApiKeyUpdateFetch) {
     try {
-
-        const { totp_code } = action.payload;
-
-        const { kid, state } = action.payload.apiKey;
-
-        const updatedApiKey = yield call(API.patch(updateOptions), `/resource/api_keys/${kid}`, { totp_code, state });
-
+        const {totp_code} = action.payload;
+        const {kid, state} = action.payload.apiKey;
+        const updatedApiKey = yield call(API.patch(updateOptions), `/resource/api_keys/${kid}`, {totp_code, state});
         yield put(apiKeyUpdate(updatedApiKey));
-
-        yield put(alertPush({ message: ['success.api_keys.updated'], type: 'success' }));
-
+        yield put(alertPush({message: ['success.api_keys.updated'], type: 'success'}));
+    } catch (error) {
+        yield put(alertPush({message: error.message, code: error.code, type: 'error'}));
+    } finally {
+        yield put(apiKeys2FAModal({active: false}));
     }
-
-    catch (error) {
-
-        yield put(alertPush({ message: error.message, code: error.code, type: 'error' }));
-
-    }
-
-    finally {
-
-        yield put(apiKeys2FAModal({ active: false }));
-
-    }
-
 }
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/apiKeys/sagas/apiKeyUpdateSaga.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/apiKeys/sagas/apiKeyUpdateSaga.ts
