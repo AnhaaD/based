@@ -1,9 +1,26 @@
-const selectMarketsState = (state) => state.public.markets;
+import { RootState } from '../../index';
+import { MarketsState } from './reducer';
+import { Market } from './types';
 
-export const selectMarkets = (state) => selectMarketsState(state).list;
+const selectMarketsState = (state: RootState): MarketsState => state.public.markets;
 
-export const selectMarketsLoading = (state) => selectMarketsState(state).loading;
+export const selectMarkets = (state: RootState): Market[] =>
+    selectMarketsState(state).list;
 
-export const selectCurrentMarket = (state) => selectMarketsState(state).currentMarket;
+export const selectMarketsLoading = (state: RootState): boolean | undefined =>
+    selectMarketsState(state).loading;
 
-export const selectMarketTickers = (state) => selectMarketsState(state).tickers;
+export const selectCurrentMarket = (state: RootState): Market | undefined =>
+    selectMarketsState(state).currentMarket;
+
+export const selectMarketTickers = (state: RootState): MarketsState['tickers'] =>
+    selectMarketsState(state).tickers;
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/public/markets/selectors.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/public/markets/selectors.ts
