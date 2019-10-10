@@ -1,29 +1,40 @@
-export const selectHistory = (state) => state.user.history.list;
+import { RootState } from '../../index';
+import { WalletHistoryList } from './types';
 
-export const selectFullHistory = (state) => state.user.history.fullHistory;
+export const selectHistory = (state: RootState): WalletHistoryList =>
+    state.user.history.list;
 
-export const selectCurrentPage = (state) => state.user.history.page;
+export const selectFullHistory = (state: RootState): number =>
+    state.user.history.fullHistory;
 
-export const selectPageCount = (state, limit) => Math.ceil(state.user.history.fullHistory / limit);
+export const selectCurrentPage = (state: RootState): number =>
+    state.user.history.page;
 
-export const selectFirstElemIndex = (state, limit) => (state.user.history.page * limit) + 1;
+export const selectPageCount = (state: RootState, limit): number =>
+    Math.ceil(state.user.history.fullHistory / limit);
 
-export const selectLastElemIndex = (state, limit) => {
+export const selectFirstElemIndex = (state: RootState, limit): number =>
+    (state.user.history.page * limit) + 1;
 
+export const selectLastElemIndex = (state: RootState, limit: number): number => {
     if ((state.user.history.page * limit) + limit > selectFullHistory(state)) {
-
         return selectFullHistory(state);
-
-    }
-
-    else {
-
+    } else {
         return (state.user.history.page * limit) + limit;
-
     }
-
 };
 
-export const selectNextPageExists = (state, limit) => (state.user.history.page + 1) < selectPageCount(state, limit);
+export const selectNextPageExists = (state: RootState, limit: number): boolean =>
+    (state.user.history.page + 1) < selectPageCount(state, limit);
 
-export const selectHistoryLoading = (state) => state.user.history.fetching;
+export const selectHistoryLoading = (state: RootState): boolean =>
+    state.user.history.fetching;
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/history/selectors.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/history/selectors.ts
