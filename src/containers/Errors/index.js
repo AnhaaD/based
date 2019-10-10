@@ -1,21 +1,25 @@
 import * as React from 'react';
 
 class ErrorWrapper extends React.Component {
-
-    componentDidCatch(error, info) {
-
-        
-
+    public componentDidCatch(error, info) {
+        // tslint:disable-next-line
         console.error(error);
-
     }
 
-    render() {
-
+    public render() {
         return this.props.children;
-
     }
-
 }
 
-export { ErrorWrapper, };
+export {
+    ErrorWrapper,
+};
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/Errors/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/Errors/index.tsx
