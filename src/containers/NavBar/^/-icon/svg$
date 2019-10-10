@@ -17,3 +17,10 @@ webpackContext.keys = function webpackContextKeys() {
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
 webpackContext.id = "./src/containers/NavBar recursive ^\\.\\/.*\\-icon\\.svg$";
+
+
+//////////////////
+// WEBPACK FOOTER
+// ./src/containers/NavBar ^\.\/.*\-icon\.svg$
+// module id = ./src/containers/NavBar recursive ^\.\/.*\-icon\.svg$
+// module chunks = 0
