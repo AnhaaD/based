@@ -1,65 +1,79 @@
 import * as React from 'react';
-
 import { Modal, TabPanel } from '../../components';
 
 const panels = [
-
     {
-
         label: 'LEGAL NOTES',
-
-        content: (React.createElement("div", { className: 'tabs-content' }, "LEGAL NOTES")),
-
+        content: (
+            <div className={'tabs-content'}>
+                LEGAL NOTES
+            </div>
+        ),
     },
-
     {
-
         label: 'PRIVACY POLICY',
-
-        content: (React.createElement("div", { id: "privacy-policy", className: "tabs-content" }, "PRIVACY POLICY")),
-
+        content: (
+            <div id="privacy-policy" className="tabs-content">
+                PRIVACY POLICY
+            </div>
+        ),
     },
-
     {
-
         label: 'TERM OF SERVICE',
-
-        content: (React.createElement("div", { className: 'tabs-content' }, "TERM OF SERVICE")),
-
+        content: (
+            <div className={'tabs-content'}>
+                TERM OF SERVICE
+            </div>
+        ),
     },
-
 ];
 
-class LegalDocuments extends React.Component {
-
-    constructor() {
-
-        super(...arguments);
-
-        this.state = {
-
-            currentTabIndex: 0,
-
-        };
-
-        this.onCurrentTabChange = index => this.setState({ currentTabIndex: index });
-
-        this.renderModalBody = () => {
-
-            return (React.createElement("div", null,
-
-                React.createElement(TabPanel, { panels: panels, currentTabIndex: this.state.currentTabIndex, onCurrentTabChange: this.onCurrentTabChange })));
-
-        };
-
-    }
-
-    render() {
-
-        return (React.createElement(Modal, { className: 'pg-legal-docs-modal', show: this.props.isOpen, header: React.createElement("h3", null, "Title"), content: this.renderModalBody(), footer: this.props.footer }));
-
-    }
-
+export interface LegalDocumentsProps {
+    isOpen: boolean;
+    footer: React.ReactNode;
 }
 
-export { LegalDocuments, };
+interface State {
+    currentTabIndex: number;
+}
+
+class LegalDocuments extends React.Component<LegalDocumentsProps, State> {
+    public state = {
+        currentTabIndex: 0,
+    };
+
+    public render() {
+      return(
+          <Modal
+              className={'pg-legal-docs-modal'}
+              show={this.props.isOpen}
+              header={<h3>Title</h3>}
+              content={this.renderModalBody()}
+              footer={this.props.footer}
+          />
+      );
+    }
+
+    private onCurrentTabChange = index => this.setState({ currentTabIndex: index });
+
+    private renderModalBody = () => {
+        return(
+            <div>
+                <TabPanel panels={panels} currentTabIndex={this.state.currentTabIndex} onCurrentTabChange={this.onCurrentTabChange}/>
+            </div>
+        );
+    };
+}
+
+export {
+    LegalDocuments,
+};
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/LegalDocuments/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/LegalDocuments/index.tsx
