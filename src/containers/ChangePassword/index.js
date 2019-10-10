@@ -1,145 +1,147 @@
-import { Button, Input } from '@openware/components';
-
 import * as React from 'react';
+import {
+    FormattedMessage,
+    InjectedIntlProps,
+    injectIntl,
+} from 'react-intl';
+import { Button, Input } from '../../openware';
 
-import { FormattedMessage, injectIntl, } from 'react-intl';
+type OnClearError = () => void;
+type OnSubmitChangePassword = (oldPassword: string, newPassword: string, confirmPassword: string) => void;
 
-class ChangePasswordComponent extends React.Component {
+interface ChangePasswordProps {
+    onClearError: OnClearError;
+    onSubmit: OnSubmitChangePassword;
+    success?: boolean;
+}
 
-    constructor(props) {
+interface ChangePasswordState {
+    showForm: boolean;
+    oldPassword: string;
+    newPassword: string;
+}
 
+type Props = ChangePasswordProps & InjectedIntlProps;
+
+class ChangePasswordComponent extends React.Component<Props, ChangePasswordState> {
+    constructor(props: Props) {
         super(props);
 
-        this.renderPasswordView = () => {
-
-            return (React.createElement(React.Fragment, null,
-
-                React.createElement(Button, { className: "pg-profile-page__btn-secondary", onClick: this.toggleShowForm, label: this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.change' }) })));
-
-        };
-
-        this.renderForm = () => {
-
-            const { oldPassword, newPassword } = this.state;
-
-            return (React.createElement("div", null,
-
-                React.createElement("div", { className: "pg-change-password-form" },
-
-                    React.createElement("div", { className: "pg-change-password-form__group" },
-
-                        React.createElement("label", { className: "pg-change-password-form__label" },
-
-                            React.createElement(FormattedMessage, { id: "page.body.profile.header.account.content.password.old" })),
-
-                        React.createElement(Input, { type: "password", value: oldPassword, onChangeValue: this.handleOldPasswordChange })),
-
-                    React.createElement("div", { className: "pg-change-password-form__group" },
-
-                        React.createElement("label", { className: "pg-change-password-form__label" },
-
-                            React.createElement(FormattedMessage, { id: "page.body.profile.header.account.content.password.new" })),
-
-                        React.createElement(Input, { type: "password", value: newPassword, onChangeValue: this.handleNewPasswordChange })),
-
-                    React.createElement(Button, { className: "pg-profile-page__btn-secondary", label: this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.save' }), onClick: this.handleSubmit }),
-
-                    React.createElement(Button, { className: "pg-profile-page__btn-secondary", label: this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.cancel' }), onClick: this.handleCancel }))));
-
-        };
-
-        this.toggleShowForm = () => {
-
-            this.setState((state) => ({
-
-                showForm: !state.showForm,
-
-            }));
-
-        };
-
-        this.handleOldPasswordChange = (value) => {
-
-            this.setState({
-
-                oldPassword: value,
-
-            });
-
-        };
-
-        this.handleNewPasswordChange = (value) => {
-
-            this.setState({
-
-                newPassword: value,
-
-            });
-
-        };
-
-        this.handleSubmit = () => {
-
-            this.props.onSubmit(this.state.oldPassword, this.state.newPassword, this.state.newPassword);
-
-        };
-
-        this.handleCancel = () => {
-
-            this.setState({
-
-                showForm: false,
-
-                oldPassword: '',
-
-                newPassword: '',
-
-            });
-
-            this.props.onClearError();
-
-        };
-
         this.state = {
-
             showForm: false,
-
             oldPassword: '',
-
             newPassword: '',
-
         };
-
     }
 
-    componentWillReceiveProps(next) {
-
+    public componentWillReceiveProps(next: ChangePasswordProps) {
         if (!this.props.success && next.success) {
-
             this.handleCancel();
-
         }
-
     }
 
-    render() {
-
+    public render() {
         const { showForm } = this.state;
-
-        return (React.createElement(React.Fragment, null,
-
-            React.createElement("label", { className: "pg-profile-page__label" },
-
-                React.createElement("div", null,
-
-                    React.createElement(FormattedMessage, { id: "page.body.profile.header.account.content.password" })),
-
-                React.createElement("span", { className: "pg-profile-page__label-value" }, "***********")),
-
-            showForm ? this.renderForm() : this.renderPasswordView()));
-
+        return (
+            <React.Fragment>
+                <label className="pg-profile-page__label">
+                    <div>
+                        <FormattedMessage id="page.body.profile.header.account.content.password" />
+                    </div>
+                    <span className="pg-profile-page__label-value">***********</span>
+                </label>
+                {showForm ? this.renderForm() : this.renderPasswordView()}
+            </React.Fragment>
+        );
     }
 
+    private renderPasswordView = () => {
+        return (
+            <React.Fragment>
+                <Button
+                    className="pg-profile-page__btn-secondary"
+                    onClick={this.toggleShowForm}
+                    label={this.props.intl.formatMessage({ id: 'page.body.profile.header.account.content.password.button.change'})}
+                />
+            </React.Fragment>
+        );
+    };
+
+    private renderForm = () => {
+        const { oldPassword, newPassword } = this.state;
+        return (
+            <div>
+                <div className="pg-change-password-form">
+                    <div className="pg-change-password-form__group">
+                        <label className="pg-change-password-form__label">
+                            <FormattedMessage id="page.body.profile.header.account.content.password.old" />
+                        </label>
+                        <Input type="password" value={oldPassword} onChangeValue={this.handleOldPasswordChange} />
+                    </div>
+                    <div className="pg-change-password-form__group">
+                        <label className="pg-change-password-form__label">
+                            <FormattedMessage id="page.body.profile.header.account.content.password.new" />
+                        </label>
+                        <Input
+                            type="password"
+                            value={newPassword}
+                            onChangeValue={this.handleNewPasswordChange}
+                        />
+                    </div>
+                    <Button
+                        className="pg-profile-page__btn-secondary"
+                        label={this.props.intl.formatMessage({id: 'page.body.profile.header.account.content.password.button.save'})}
+                        onClick={this.handleSubmit}
+                    />
+                    <Button
+                        className="pg-profile-page__btn-secondary"
+                        label={this.props.intl.formatMessage({id: 'page.body.profile.header.account.content.password.button.cancel'})}
+                        onClick={this.handleCancel}
+                    />
+                </div>
+            </div>
+        );
+    };
+
+    private toggleShowForm = () => {
+        this.setState((state: ChangePasswordState) => ({
+            showForm: !state.showForm,
+        }));
+    };
+
+    private handleOldPasswordChange = (value: string) => {
+        this.setState({
+            oldPassword: value,
+        });
+    };
+
+    private handleNewPasswordChange = (value: string) => {
+        this.setState({
+            newPassword: value,
+        });
+    };
+
+    private handleSubmit = () => {
+        this.props.onSubmit(this.state.oldPassword, this.state.newPassword, this.state.newPassword);
+    };
+
+    private handleCancel = () => {
+        this.setState({
+            showForm: false,
+            oldPassword: '',
+            newPassword: '',
+        });
+        this.props.onClearError();
+    };
 }
 
 export const ChangePassword = injectIntl(ChangePasswordComponent);
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/ChangePassword/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/ChangePassword/index.tsx
