@@ -1,89 +1,94 @@
-import { Loader } from '@openware/components';
-
+import { History } from 'history';
 import * as React from 'react';
-
-import { injectIntl, } from 'react-intl';
-
-import { connect } from 'react-redux';
-
+import {
+    InjectedIntlProps,
+    injectIntl,
+} from 'react-intl';
+import { connect, MapStateToProps } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-
 import { setDocumentTitle } from '../../helpers';
+import {
+    emailVerificationFetch,
+    RootState,
+    selectCurrentLanguage,
+    selectSendEmailVerificationLoading,
+} from '../../modules';
+import { Loader } from '../../openware';
 
-import { emailVerificationFetch, selectCurrentLanguage, selectSendEmailVerificationLoading, } from '../../modules';
-
-class EmailVerificationComponent extends React.Component {
-
-    constructor() {
-
-        super(...arguments);
-
-        this.handleClick = () => {
-
-            this.props.emailVerificationFetch({
-
-                email: this.props.location.state.email,
-
-                lang: this.props.i18n.toLowerCase(),
-
-            });
-
+interface OwnProps {
+    history: History;
+    location: {
+        state: {
+            email: string;
         };
+    };
+}
 
-    }
+interface DispatchProps {
+    emailVerificationFetch: typeof emailVerificationFetch;
+}
 
-    componentDidMount() {
+interface ReduxProps {
+    emailVerificationLoading: boolean;
+}
 
+type Props = DispatchProps & ReduxProps & OwnProps & InjectedIntlProps;
+
+class EmailVerificationComponent extends React.Component<Props> {
+    public componentDidMount() {
         setDocumentTitle('Email verification');
-
         if (!this.props.location.state || !this.props.location.state.email) {
-
             this.props.history.push('/signin');
-
         }
-
     }
 
-    render() {
-
+    public render() {
         const { emailVerificationLoading } = this.props;
 
         const title = this.props.intl.formatMessage({ id: 'page.header.signUp.modal.header' });
-
         const text = this.props.intl.formatMessage({ id: 'page.header.signUp.modal.body' });
-
         const button = this.props.intl.formatMessage({ id: 'page.resendConfirmation' });
-
-        return (React.createElement("div", { className: "pg-emailverification-container" },
-
-            React.createElement("div", { className: "pg-emailverification" },
-
-                React.createElement("div", { className: "pg-emailverification-title" }, title),
-
-                React.createElement("div", { className: "pg-emailverification-body" },
-
-                    React.createElement("div", { className: "pg-emailverification-body-text" }, text),
-
-                    React.createElement("div", { className: "pg-emailverification-body-container" }, emailVerificationLoading ? React.createElement(Loader, null) : React.createElement("button", { className: "pg-emailverification-body-container-button", onClick: this.handleClick }, button))))));
-
+        return (
+            <div className="pg-emailverification-container">
+                <div className="pg-emailverification">
+                    <div className="pg-emailverification-title">{title}</div>
+                    <div className="pg-emailverification-body">
+                        <div className="pg-emailverification-body-text">{text}</div>
+                        <div className="pg-emailverification-body-container">
+                            {emailVerificationLoading ? <Loader /> : <button className="pg-emailverification-body-container-button" onClick={this.handleClick}>{button}</button>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
+
+    private handleClick = () => {
+        this.props.emailVerificationFetch({
+          email: this.props.location.state.email,
+          lang: this.props.i18n.toLowerCase(),
+        });
+    }
 }
 
-const mapStateToProps = state => ({
-
+const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> = state => ({
     emailVerificationLoading: selectSendEmailVerificationLoading(state),
-
     i18n: selectCurrentLanguage(state),
-
 });
 
 const mapDispatchProps = {
-
     emailVerificationFetch,
-
 };
 
+//tslint:disable-next-line:no-any
+export const EmailVerificationScreen = injectIntl(withRouter(connect(mapStateToProps, mapDispatchProps)(EmailVerificationComponent) as any));
 
 
-export const EmailVerificationScreen = injectIntl(withRouter(connect(mapStateToProps, mapDispatchProps)(EmailVerificationComponent)));
+// WEBPACK FOOTER //
+// src/drone/src/src/screens/EmailVerification/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/screens/EmailVerification/index.tsx
