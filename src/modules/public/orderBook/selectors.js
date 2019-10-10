@@ -1,7 +1,23 @@
-export const selectOrderBookLoading = (state) => state.public.orderBook.loading;
+import { RootState } from '../../index';
+import { DepthState } from './types';
 
-export const selectDepthAsks = (state) => state.public.depth.asks;
+export const selectOrderBookLoading = (state: RootState): boolean =>
+  state.public.orderBook.loading;
 
-export const selectDepthBids = (state) => state.public.depth.bids;
+export const selectDepthAsks =
+  (state: RootState): DepthState['asks'] => state.public.depth.asks;
 
-export const selectDepthLoading = (state) => state.public.depth.loading;
+export const selectDepthBids =
+  (state: RootState): DepthState['bids'] => state.public.depth.bids;
+
+export const selectDepthLoading = (state: RootState): boolean =>
+  state.public.depth.loading;
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/public/orderBook/selectors.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/public/orderBook/selectors.ts
