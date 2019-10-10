@@ -1,3 +1,16 @@
-export const selectSendEmailVerificationSuccess = (state) => state.user.sendEmailVerification.success;
+import { RootState } from '../..';
 
-export const selectSendEmailVerificationLoading = (state) => state.user.sendEmailVerification.loading;
+export const selectSendEmailVerificationSuccess = (state: RootState): boolean =>
+    state.user.sendEmailVerification.success;
+
+export const selectSendEmailVerificationLoading = (state: RootState): boolean =>
+    state.user.sendEmailVerification.loading;
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/emailVerification/selectors.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/emailVerification/selectors.ts
