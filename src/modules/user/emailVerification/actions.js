@@ -1,23 +1,53 @@
-import { EMAIL_VERIFICATION_DATA, EMAIL_VERIFICATION_ERROR, EMAIL_VERIFICATION_FETCH, } from './constants';
+import {
+    CommonError,
+} from '../../types';
+import {
+    EMAIL_VERIFICATION_DATA,
+    EMAIL_VERIFICATION_ERROR,
+    EMAIL_VERIFICATION_FETCH,
+} from './constants';
 
-export const emailVerificationData = () => ({
+export interface EmailVerificationData {
+    type: typeof EMAIL_VERIFICATION_DATA;
+}
 
+export interface EmailVerificationError {
+    type: typeof EMAIL_VERIFICATION_ERROR;
+    error: CommonError;
+}
+
+export interface EmailVerificationFetch {
+    type: typeof EMAIL_VERIFICATION_FETCH;
+    payload: {
+      email: string;
+      lang: string;
+    };
+}
+
+export type EmailVerificationAction =
+    EmailVerificationData
+    | EmailVerificationError
+    | EmailVerificationFetch;
+
+export const emailVerificationData = (): EmailVerificationData => ({
     type: EMAIL_VERIFICATION_DATA,
-
 });
 
-export const emailVerificationError = (error) => ({
-
+export const emailVerificationError = (error: CommonError): EmailVerificationError => ({
     type: EMAIL_VERIFICATION_ERROR,
-
     error,
-
 });
 
-export const emailVerificationFetch = (payload) => ({
-
+export const emailVerificationFetch = (payload: EmailVerificationFetch['payload']): EmailVerificationFetch => ({
     type: EMAIL_VERIFICATION_FETCH,
-
     payload,
-
 });
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/emailVerification/actions.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/emailVerification/actions.ts
