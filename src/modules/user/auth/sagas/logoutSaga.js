@@ -1,43 +1,33 @@
+// tslint:disable-next-line
 import { call, put } from 'redux-saga/effects';
-
-import { API } from '../../../../api';
-
+import { API, RequestOptions } from '../../../../api';
 import { alertPush } from '../../../public/alert';
-
 import { signInRequire2FA } from '../../auth';
-
 import { userOpenOrdersReset } from '../../openOrders';
-
 import { userReset } from '../../profile';
+import { logoutError, LogoutFetch } from '../actions';
 
-import { logoutError } from '../actions';
-
-const requestOptions = {
-
+const requestOptions: RequestOptions = {
     apiVersion: 'barong',
-
 };
 
-export function* logoutSaga(action) {
-
+export function* logoutSaga(action: LogoutFetch) {
     try {
-
         yield call(API.delete(requestOptions), '/identity/sessions');
-
         yield put(userReset());
-
         yield put(userOpenOrdersReset());
-
         yield put(signInRequire2FA({ require2fa: false }));
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
         yield put(logoutError(error));
-
-        yield put(alertPush({ message: error.message, code: error.code, type: 'error' }));
-
+        yield put(alertPush({message: error.message, code: error.code, type: 'error'}));
     }
-
 }
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/auth/sagas/logoutSaga.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/auth/sagas/logoutSaga.ts
