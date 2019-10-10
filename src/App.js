@@ -1,47 +1,64 @@
+import { History } from 'history';
 import * as React from 'react';
-
 import { IntlProvider } from 'react-intl';
-
-import { connect } from 'react-redux';
-
+import { connect, MapStateToProps } from 'react-redux';
 import { Router } from 'react-router';
-
-import { Alerts, ErrorWrapper, Header } from './containers';
-
+import { Alerts, ErrorWrapper } from './containers';
+import { Header } from './custom/containers';
+import { RootState } from './modules';
 import { Layout } from './routes';
 
-class AppLayout extends React.Component {
-
-    render() {
-
-        const { locale, history } = this.props;
-
-        const { lang, messages } = locale;
-
-        return (React.createElement(IntlProvider, { locale: lang, messages: messages, key: lang },
-
-            React.createElement(Router, { history: history },
-
-                React.createElement(ErrorWrapper, null,
-
-                    React.createElement(Header, null),
-
-                    React.createElement(Alerts, null),
-
-                    React.createElement(Layout, null)))));
-
-    }
-
+interface Locale {
+    lang: string;
+    messages: object;
 }
 
-const mapStateToProps = (state) => ({
+interface AppProps {
+    history: History;
+}
 
-    locale: state.public.i18n,
+interface ReduxProps {
+    locale: Locale;
+}
 
-});
+type Props = AppProps & ReduxProps;
+
+class AppLayout extends React.Component<Props, {}, {}> {
+    public render() {
+        const { locale, history } = this.props;
+        const { lang, messages } = locale;
+        return (
+            <IntlProvider locale={lang} messages={messages} key={lang}>
+                <Router history={history}>
+                    <ErrorWrapper>
+                        <Header />
+                        <Alerts />
+                        <Layout />
+                    </ErrorWrapper>
+                </Router>
+            </IntlProvider>
+        );
+    }
+}
+
+const mapStateToProps: MapStateToProps<ReduxProps, {}, RootState> =
+    (state: RootState): ReduxProps => ({
+        locale: state.public.i18n,
+    });
+
+// tslint:disable-next-line:no-any
+const App = connect(mapStateToProps, {} as any)(AppLayout) as any;
+
+export {
+    AppProps,
+    App,
+};
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/App.tsx
 
 
 
-const App = connect(mapStateToProps, {})(AppLayout);
-
-export { App, };
+// WEBPACK FOOTER //
+// ./src/App.tsx
