@@ -1,69 +1,81 @@
 import * as React from 'react';
+import { WalletItem, WalletItemProps } from '../WalletItem';
 
-import { WalletItem } from '../WalletItem';
+interface WalletListProps {
+    walletItems: WalletItemProps[];
+    activeIndex: number;
+    /**
+     * Callback function which is invoked whenever wallet item is clicked
+     */
+    onWalletSelectionChange(item: WalletItemProps): void;
+    /**
+     * Callback function which is invoked whenever wallet item is clicked
+     */
+    onActiveIndexChange(index: number): void;
+}
 
-const removeAlt = (str) => str.replace('-alt', '');
+const removeAlt = (str: string): string => str.replace('-alt', '');
 
-const style = {
-
+const style: React.CSSProperties = {
     listStyleType: 'none',
-
     padding: 'calc(var(--gap) * 0.5) calc(var(--gap))',
-
 };
 
 /**
-
  * Component to display list of user wallets. It is scrollable and reacts on WalletItem click.
-
  */
+export class WalletList
+    extends React.Component<WalletListProps> {
 
-export class WalletList extends React.Component {
-
-    constructor(props) {
-
+    constructor(props: WalletListProps) {
         super(props);
-
-        this.itemState = (i) => {
-
-            return this.props.activeIndex === i;
-
-        };
-
-        this.makeWalletItem = (props, i) => (React.createElement("li", { key: i, style: style, onClick: this.handleClick.bind(this, i, props) },
-
-            React.createElement(WalletItem, Object.assign({ key: i }, {
-
-                ...props,
-
-                active: this.itemState(i),
-
-                currency: removeAlt(props.currency),
-
-            }))));
-
-        this.handleClick = (i, props) => {
-
-            if (this.props.onWalletSelectionChange) {
-
-                this.props.onWalletSelectionChange(props);
-
-            }
-
-            if (this.props.onActiveIndexChange) {
-
-                this.props.onActiveIndexChange(i);
-
-            }
-
-        };
-
     }
+    public itemState = (i: number) => {
+        return this.props.activeIndex === i;
+    };
+    public makeWalletItem = (props: WalletItemProps, i: number) => (
+        <li
+            key={i}
+            style={style}
+            onClick={this.handleClick.bind(this, i, props)}
+        >
+            <WalletItem
+                key={i}
+                {...{
+                    ...props,
+                    active: this.itemState(i),
+                    currency: removeAlt(props.currency),
+                }}
+            />
+        </li>
+    );
+    public handleClick = (i: number, props: WalletItemProps) => {
+        if (this.props.onWalletSelectionChange) {
+            this.props.onWalletSelectionChange(props);
+        }
+        if (this.props.onActiveIndexChange) {
+            this.props.onActiveIndexChange(i);
+        }
+    };
 
-    render() {
-
-        return (React.createElement("ul", { className: "cr-wallet-list" }, this.props.walletItems.map(this.makeWalletItem)));
-
+    public render() {
+        return (
+            <ul className="cr-wallet-list">
+                {this.props.walletItems.map(this.makeWalletItem)}
+            </ul>
+        );
     }
-
 }
+
+export {
+    WalletListProps,
+};
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/components/WalletList/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/components/WalletList/index.tsx
