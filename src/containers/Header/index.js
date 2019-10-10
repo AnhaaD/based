@@ -1,129 +1,126 @@
 import * as React from 'react';
-
-import { connect } from 'react-redux';
-
+import { connect, MapDispatchToPropsFunction } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-
-import { selectMobileWalletUi, setMobileWalletUi, } from '../../modules';
-
+import logo = require('../../assets/images/logo.svg');
+import {
+    RootState,
+    selectMobileWalletUi,
+    setMobileWalletUi,
+} from '../../modules';
 import { NavBar } from '../NavBar';
 
-
-
-class Head extends React.Component {
-
-    constructor(props) {
-
-        super(props);
-
-        this.openMenu = () => {
-
-            this.setState({
-
-                isActive: true,
-
-            });
-
-            document.getElementsByClassName('pg-header__navbar')[0].addEventListener('click', this.handleOutsideClick);
-
-        };
-
-        this.backWallets = () => {
-
-            this.props.setMobileWalletUi('');
-
-        };
-
-        this.closeMenu = (e) => {
-
-            this.setState({
-
-                isActive: false,
-
-            });
-
-            this.props.setMobileWalletUi('');
-
-        };
-
-        this.handleOutsideClick = (e) => {
-
-            if (e.offsetX > e.target.clientWidth) {
-
-                this.setState({
-
-                    isActive: false,
-
-                });
-
-                document.getElementsByClassName('pg-header__navbar')[0].removeEventListener('click', this.handleOutsideClick);
-
-            }
-
-        };
-
-        this.state = {
-
-            isActive: false,
-
-        };
-
-    }
-
-    render() {
-
-        const { location, mobileWallet, image } = this.props;
-
-        const { isActive } = this.state;
-
-        return (React.createElement(React.Fragment, null, !['/confirm'].some(r => location.pathname.includes(r)) &&
-
-            React.createElement("header", { className: `pg-header ${isActive ? 'pg-header--active' : ''}` },
-
-                React.createElement("div", { className: "pg-container pg-header__content" },
-
-                    React.createElement(Link, { to: '', className: "pg-header__logo" },
-
-                        React.createElement("div", { className: "pg-logo" },
-
-                            React.createElement("img", { src: require(`../../assets/images/logo.svg`) , className: "pg-logo__img", alt: "Logo" }))),
-
-                    React.createElement("div", { className: "pg-header__location" }, mobileWallet ? React.createElement("span", null, mobileWallet) : React.createElement("span", null, location.pathname.split('/')[1])),
-
-                    mobileWallet ?
-
-                        React.createElement("div", { onClick: this.backWallets, className: "pg-header__toggler" },
-
-                            React.createElement("img", { src: require(`../../assets/images/back.svg`) })) :
-
-                        React.createElement("div", { onClick: this.openMenu, className: `pg-header__toggler ${isActive ? 'pg-header__toggler--active' : ''}` },
-
-                            React.createElement("span", { className: "pg-header__toggler-item" }),
-
-                            React.createElement("span", { className: "pg-header__toggler-item" }),
-
-                            React.createElement("span", { className: "pg-header__toggler-item" })),
-
-                    React.createElement("div", { className: "pg-header__navbar" },
-
-                        React.createElement(NavBar, { onLinkChange: this.closeMenu }))))));
-
-    }
-
+interface HeaderState {
+    isActive: boolean;
 }
 
-const mapStateToProps = (state) => ({
+interface ReduxProps {
+    mobileWallet: string;
+}
 
+interface DispatchProps {
+    setMobileWalletUi: typeof setMobileWalletUi;
+}
+
+// tslint:disable no-any jsx-no-multiline-js
+class Head extends React.Component<any, HeaderState> {
+    constructor(props: any) {
+        super(props);
+
+        this.state = {
+            isActive: false,
+        };
+    }
+
+    public render() {
+        const { location, mobileWallet } = this.props;
+        const { isActive } = this.state;
+        return (
+          <React.Fragment>
+          {!['/confirm'].some(r => location.pathname.includes(r)) &&
+            <header className={`pg-header ${isActive ? 'pg-header--active' : ''}`}>
+                <div className="pg-container pg-header__content">
+                    <Link to={'/wallets'} className="pg-header__logo">
+                        <div className="pg-logo">
+                            <img src={logo} className="pg-logo__img" alt="Logo" />
+                        </div>
+                    </Link>
+                    <div className="pg-header__location">
+                        {mobileWallet ? <span>{mobileWallet}</span> : <span>{location.pathname.split('/')[1]}</span>}
+                    </div>
+                    {mobileWallet ?
+                        <div
+                            onClick={this.backWallets}
+                            className="pg-header__toggler"
+                        >
+                            <img src={require(`./back.svg`)} />
+                        </div> :
+                        <div
+                            onClick={this.openMenu}
+                            className={`pg-header__toggler ${isActive ? 'pg-header__toggler--active' : ''}`}
+                        >
+                            <span className="pg-header__toggler-item"/>
+                            <span className="pg-header__toggler-item"/>
+                            <span className="pg-header__toggler-item"/>
+                        </div>
+                    }
+                    <div className="pg-header__navbar">
+                        <NavBar onLinkChange={this.closeMenu}/>
+                    </div>
+                </div>
+            </header>}
+          </React.Fragment>
+        );
+    }
+
+    private openMenu = () => {
+        this.setState({
+            isActive: true,
+        });
+        document.getElementsByClassName('pg-header__navbar')[0].addEventListener('click', this.handleOutsideClick);
+    }
+
+    private backWallets = () => {
+        this.props.setMobileWalletUi('');
+    }
+
+    private closeMenu = (e: any) => {
+        this.setState({
+            isActive: false,
+        });
+        this.props.setMobileWalletUi('');
+    }
+
+    private handleOutsideClick = (e: any) => {
+        if (e.offsetX > e.target.clientWidth) {
+            this.setState({
+                isActive: false,
+            });
+            document.getElementsByClassName('pg-header__navbar')[0].removeEventListener('click', this.handleOutsideClick);
+        }
+    }
+}
+
+const mapStateToProps = (state: RootState): ReduxProps => ({
     mobileWallet: selectMobileWalletUi(state),
-
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, {}> =
+    dispatch => ({
+        setMobileWalletUi: payload => dispatch(setMobileWalletUi(payload)),
+    });
 
-    setMobileWalletUi: payload => dispatch(setMobileWalletUi(payload)),
+const Header = withRouter(connect(mapStateToProps, mapDispatchToProps)(Head) as any) as any;
 
-});
+export {
+    HeaderState,
+    Header,
+};
 
-const Header = withRouter(connect(mapStateToProps, mapDispatchToProps)(Head));
 
-export { Header, };
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/Header/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/Header/index.tsx
