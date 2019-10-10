@@ -1,55 +1,67 @@
-
-
-import { Checkbox } from '@openware/components';
-
+/* tslint:disable jsx-no-lambda  jsx-no-multiline-js */
 import * as React from 'react';
-
 import { FormattedMessage } from 'react-intl';
+import { Checkbox } from '../../openware';
 
-class ProfileTwoFactorAuthComponent extends React.Component {
+interface ProfileTwoFactorAuthProps {
+    is2faEnabled: boolean;
+    navigateTo2fa: (enable2fa: boolean) => void;
+}
 
-    constructor(props) {
+interface ProfileTwoFactorAuthState {
+    is2faEnabled: boolean;
+}
 
+type Props = ProfileTwoFactorAuthProps;
+
+class ProfileTwoFactorAuthComponent extends React.Component<Props, ProfileTwoFactorAuthState> {
+    constructor(props: ProfileTwoFactorAuthProps) {
         super(props);
 
-        this.handleToggle2fa = () => {
-
-            this.props.navigateTo2fa(!this.state.is2faEnabled);
-
-        };
-
         this.state = {
-
-            is2faEnabled: props.is2faEnabled,
-
+          is2faEnabled: props.is2faEnabled,
         };
-
     }
 
-    render() {
-
+    public render() {
         const { is2faEnabled } = this.state;
-
         const className = is2faEnabled ? 'pg-profile-page__label-value__enabled'
+                                       : 'pg-profile-page__label-value__disabled';
 
-            : 'pg-profile-page__label-value__disabled';
-
-        return (React.createElement(React.Fragment, null,
-
-            React.createElement("label", { className: "pg-profile-page__label" },
-
-                React.createElement("div", null,
-
-                    React.createElement(FormattedMessage, { id: "page.body.profile.header.account.content.twoFactorAuthentication" })),
-
-                React.createElement("span", { className: className }, is2faEnabled ? React.createElement(FormattedMessage, { id: "page.body.profile.header.account.content.twoFactorAuthentication.message.enable" })
-
-                    : React.createElement(FormattedMessage, { id: "page.body.profile.header.account.content.twoFactorAuthentication.message.disable" }))),
-
-            React.createElement(Checkbox, { checked: is2faEnabled, className: 'pg-profile-page__switch', onChange: () => this.handleToggle2fa(), label: '', slider: true })));
-
+        return (
+            <React.Fragment>
+                <label className="pg-profile-page__label">
+                    <div>
+                        <FormattedMessage id="page.body.profile.header.account.content.twoFactorAuthentication" />
+                    </div>
+                    <span className={className}>
+                    {is2faEnabled ? <FormattedMessage id="page.body.profile.header.account.content.twoFactorAuthentication.message.enable" />
+                                  : <FormattedMessage id="page.body.profile.header.account.content.twoFactorAuthentication.message.disable" />}
+                    </span>
+                </label>
+                <Checkbox
+                    checked={is2faEnabled}
+                    className={'pg-profile-page__switch'}
+                    onChange={() => this.handleToggle2fa()}
+                    label={''}
+                    slider={true}
+                />
+            </React.Fragment>
+        );
     }
 
+    private handleToggle2fa = () => {
+        this.props.navigateTo2fa(!this.state.is2faEnabled);
+    }
 }
 
 export const ProfileTwoFactorAuth = ProfileTwoFactorAuthComponent;
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/ProfileTwoFactorAuth/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/ProfileTwoFactorAuth/index.tsx
