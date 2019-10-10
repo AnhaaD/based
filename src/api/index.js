@@ -1,61 +1,70 @@
-import { makeRequest } from './requestBuilder';
+import { AxiosResponse } from 'axios';
+import { JsonBody, makeRequest, RequestOptions } from './requestBuilder';
 
+export * from './types';
 export * from './config';
+export { RequestOptions } from './requestBuilder';
 
-export const API = {
+export type RequestBody = JsonBody | FormData;
 
-    get: (config) => async (url) => makeRequest({
+export type RequestMethod = (config: RequestOptions) =>
+    (url: string, body?: RequestBody) => Promise<AxiosResponse['data']>;
 
-        method: 'get',
+export interface ApiWrapper {
+    get: RequestMethod;
+    post: RequestMethod;
+    patch: RequestMethod;
+    put: RequestMethod;
+    delete: RequestMethod;
+}
 
-        url,
+export const API: ApiWrapper = {
+    get: (config: RequestOptions) => async (url: string) =>
+        makeRequest({
+            method: 'get',
+            url,
+        }, config),
 
-    }, config),
+    post: (config: RequestOptions) => async (url: string, body?: JsonBody) =>
+        makeRequest({
+            method: 'post',
+            body,
+            url,
+        }, config),
 
-    post: (config) => async (url, body) => makeRequest({
+    patch: (config: RequestOptions) => async (url: string, body?: JsonBody) =>
+        makeRequest({
+            method: 'patch',
+            body,
+            url,
+        }, config),
 
-        method: 'post',
+    put: (config: RequestOptions) => async (url: string, body?: JsonBody) =>
+        makeRequest({
+            method: 'put',
+            body,
+            url,
+        }, config),
 
-        body,
-
-        url,
-
-    }, config),
-
-    patch: (config) => async (url, body) => makeRequest({
-
-        method: 'patch',
-
-        body,
-
-        url,
-
-    }, config),
-
-    put: (config) => async (url, body) => makeRequest({
-
-        method: 'put',
-
-        body,
-
-        url,
-
-    }, config),
-
-    delete: (config) => async (url) => makeRequest({
-
-        method: 'delete',
-
-        url,
-
-    }, config),
-
+    delete: (config: RequestOptions) => async (url: string, body?: JsonBody) =>
+        makeRequest({
+            method: 'delete',
+            body,
+            url,
+        }, config),
 };
 
-const conf = {
-
+const conf: RequestOptions = {
     apiVersion: 'barong',
-
 };
 
-export const changePassword = async (body) => API.post(conf)('/identity/users/password/confirm_code', body);
+export const changePassword = async body => API.post(conf)('/identity/users/password/confirm_code', body);
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/api/index.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/api/index.ts
