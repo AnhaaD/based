@@ -1,235 +1,205 @@
 import cn from 'classnames';
-
 import * as React from 'react';
-
 import { FormattedMessage } from 'react-intl';
+import { connect, MapDispatchToPropsFunction } from 'react-redux';
+import { Label, labelFetch, selectLabelData, selectUserInfo, User } from '../../modules';
 
-import { connect } from 'react-redux';
+interface ReduxProps {
+    label: Label[];
+}
 
-import { labelFetch, selectLabelData, selectUserInfo } from '../../modules';
+interface DispatchProps {
+    labelFetch: typeof labelFetch;
+}
 
-class ProfileVerificationComponent extends React.Component {
+interface ProfileVerificationProps {
+    user: User;
+}
 
-    componentDidMount() {
+type Props =  DispatchProps & ProfileVerificationProps & ReduxProps;
 
+class ProfileVerificationComponent extends React.Component<Props> {
+    public componentDidMount() {
         this.props.labelFetch();
-
     }
 
-    render() {
-
+    public render() {
         const { user } = this.props;
-
         const userLevel = user.level;
-
-        return (React.createElement("div", { className: "pg-profile-page__box pg-profile-page__left-col__verification" },
-
-            React.createElement("div", { className: "pg-profile-page__box-header" },
-
-                React.createElement("div", { className: "pg-profile-page__row" },
-
-                    React.createElement("div", { className: "pg-profile-page__verification-header" },
-
-                        React.createElement(FormattedMessage, { id: "page.body.profile.header.account.profile" })))),
-
-            this.renderFirstLevel(userLevel),
-
-            this.renderSecondLevel(userLevel),
-
-            this.renderThirdLevel(userLevel)));
-
+        return (
+            <div className="pg-profile-page__box pg-profile-page__left-col__verification">
+                <div className="pg-profile-page__box-header">
+                    <div className="pg-profile-page__row">
+                        <div className="pg-profile-page__verification-header">
+                            <FormattedMessage id="page.body.profile.header.account.profile" />
+                        </div>
+                    </div>
+                </div>
+                {this.renderFirstLevel(userLevel)}
+                {this.renderSecondLevel(userLevel)}
+                {this.renderThirdLevel(userLevel)}
+            </div>
+        );
     }
 
-    renderFirstLevel(userLevel) {
-
+    private renderFirstLevel(userLevel: number) {
         const targetLevel = 1;
-
-        const { titleClassName, } = this.getLevelsClassNames(userLevel, targetLevel);
-
-        return (React.createElement("div", { className: "pg-profile-page__row pg-profile-page__level-verification" },
-
-            React.createElement("div", { className: titleClassName },
-
-                this.renderVerificationLevel('page.body.profile.header.account.profile.email', userLevel, targetLevel),
-
-                React.createElement("p", null,
-
-                    React.createElement(FormattedMessage, { id: "page.body.profile.header.account.profile.email.message" })))));
-
+        const {
+            titleClassName,
+        } = this.getLevelsClassNames(userLevel, targetLevel);
+        return (
+            <div className="pg-profile-page__row pg-profile-page__level-verification">
+                <div className={titleClassName}>
+                    {this.renderVerificationLevel('page.body.profile.header.account.profile.email', userLevel, targetLevel)}
+                    <p><FormattedMessage id="page.body.profile.header.account.profile.email.message" /></p>
+                </div>
+            </div>
+        );
     }
 
-    renderSecondLevel(userLevel) {
-
+    private renderSecondLevel(userLevel: number) {
         const targetLevel = 2;
-
-        const { titleClassName, } = this.getLevelsClassNames(userLevel, targetLevel);
-
-        return (React.createElement("div", { className: "pg-profile-page__row pg-profile-page__level-verification" },
-
-            React.createElement("div", { className: titleClassName },
-
-                this.renderVerificationLevel('page.body.profile.header.account.profile.phone', userLevel, targetLevel),
-
-                React.createElement("p", null,
-
-                    React.createElement(FormattedMessage, { id: "page.body.profile.header.account.profile.phone.message" })))));
-
+        const {
+            titleClassName,
+        } = this.getLevelsClassNames(userLevel, targetLevel);
+        return (
+            <div className="pg-profile-page__row pg-profile-page__level-verification">
+                <div className={titleClassName}>
+                    {this.renderVerificationLevel('page.body.profile.header.account.profile.phone', userLevel, targetLevel)}
+                    <p><FormattedMessage id="page.body.profile.header.account.profile.phone.message" /></p>
+                </div>
+            </div>
+        );
     }
 
-    renderThirdLevel(userLevel) {
-
+    private renderThirdLevel(userLevel: number) {
         const targetLevel = 3;
-
-        const documentLabel = this.props.label.find((label) => label.key === 'document');
-
+        const documentLabel = this.props.label.find((label: Label) => label.key === 'document');
         const isPending = documentLabel && documentLabel.value === 'pending' ? this.renderPendingIcon() : '';
 
-        const { titleClassName, } = this.getLevelsClassNames(userLevel, targetLevel);
+        const {
+            titleClassName,
+        } = this.getLevelsClassNames(userLevel, targetLevel);
 
-        return (React.createElement("div", { className: "pg-profile-page__row pg-profile-page__level-verification" },
-
-            React.createElement("div", { className: titleClassName },
-
-                this.renderIdentityVerification('page.body.profile.header.account.profile.identity', userLevel, targetLevel, documentLabel),
-
-                React.createElement("p", null,
-
-                    React.createElement(FormattedMessage, { id: "page.body.profile.header.account.profile.identity.message" }))),
-
-            isPending));
-
+        return (
+            <div className="pg-profile-page__row pg-profile-page__level-verification">
+                <div className={titleClassName}>
+                    {this.renderIdentityVerification('page.body.profile.header.account.profile.identity', userLevel, targetLevel, documentLabel)}
+                    <p><FormattedMessage id="page.body.profile.header.account.profile.identity.message" /></p>
+                </div>
+                {isPending}
+            </div>
+        );
     }
 
-    renderPendingIcon() {
-
-        return (React.createElement("div", { className: "pg-profile-page__level-verification__pending" },
-
-            React.createElement("p", null,
-
-                React.createElement(FormattedMessage, { id: "page.body.wallets.table.pending" })),
-
-            React.createElement("img", { src: require('../../assets/images/pending.svg') })));
-
+    private renderPendingIcon() {
+        return (
+            <div className="pg-profile-page__level-verification__pending">
+                <p><FormattedMessage id="page.body.wallets.table.pending" /></p>
+                <img src={require('../../assets/images/pending.svg')} />
+            </div>
+        );
     }
 
-    renderVerificationLevel(text, userLevel, targetLevel) {
-
+    private renderVerificationLevel(text: string, userLevel, targetLevel) {
         if (userLevel === (targetLevel - 1)) {
-
-            return (React.createElement("a", { href: "/confirm", className: "pg-profile-page__level-verification__url" },
-
-                React.createElement(FormattedMessage, { id: `${text}.unverified.title` })));
-
-        }
-
-        else {
-
+            return (
+                <a href="/confirm" className="pg-profile-page__level-verification__url">
+                    <FormattedMessage id={`${text}.unverified.title`}/>
+                </a>
+            );
+        } else {
             if (userLevel < targetLevel) {
-
-                return (React.createElement("p", { className: "pg-profile-page__level-verification__name" },
-
-                    React.createElement(FormattedMessage, { id: `${text}.unverified.title` })));
-
+                return (
+                    <p className="pg-profile-page__level-verification__name">
+                        <FormattedMessage id={`${text}.unverified.title`}/>
+                    </p>
+                );
+            } else {
+                return (
+                    <p className="pg-profile-page__level-verification__name">
+                        <FormattedMessage id={`${text}.title`}/>
+                    </p>
+                );
             }
-
-            else {
-
-                return (React.createElement("p", { className: "pg-profile-page__level-verification__name" },
-
-                    React.createElement(FormattedMessage, { id: `${text}.title` })));
-
-            }
-
         }
-
     }
 
-    renderIdentityVerification(text, userLevel, targetLevel, documentLabel) {
+    private renderIdentityVerification(text: string, userLevel, targetLevel, documentLabel) {
+      const isLabelExist = this.props.label;
 
-        const isLabelExist = this.props.label;
-
-        if (isLabelExist.length > 0) {
-
-            switch (userLevel) {
-
-                case targetLevel - 1: {
-
-                    if (documentLabel) {
-
-                        return (React.createElement("p", { className: "pg-profile-page__level-verification__name" },
-
-                            React.createElement(FormattedMessage, { id: `${text}.unverified.title` })));
-
-                    }
-
-                    else {
-
-                        return (React.createElement("a", { href: "/confirm", className: "pg-profile-page__level-verification__url" },
-
-                            React.createElement(FormattedMessage, { id: `${text}.unverified.title` })));
-
-                    }
-
-                }
-
-                case targetLevel: return (React.createElement("p", { className: "pg-profile-page__level-verification__name" },
-
-                    React.createElement(FormattedMessage, { id: `${text}.title` })));
-
-                default: return (React.createElement("p", { className: "pg-profile-page__level-verification__name" },
-
-                    React.createElement(FormattedMessage, { id: `${text}.unverified.title` })));
-
+      if (isLabelExist.length > 0) {
+        switch (userLevel) {
+          case targetLevel - 1: {
+            if (documentLabel) {
+              return (
+                <p className="pg-profile-page__level-verification__name">
+                  <FormattedMessage id={`${text}.unverified.title`}/>
+                </p>
+              );
+            } else {
+              return (
+                <a href="/confirm" className="pg-profile-page__level-verification__url">
+                  <FormattedMessage id={`${text}.unverified.title`}/>
+                </a>
+              );
             }
-
+          }
+          case targetLevel: return (
+            <p className="pg-profile-page__level-verification__name">
+              <FormattedMessage id={`${text}.title`}/>
+            </p>
+          );
+          default: return(
+            <p className="pg-profile-page__level-verification__name">
+              <FormattedMessage id={`${text}.unverified.title`}/>
+            </p>
+          );
         }
-
-        else {
-
-            return (React.createElement("p", { className: "pg-profile-page__level-verification__name" },
-
-                React.createElement(FormattedMessage, { id: `${text}.unverified.title` })));
-
-        }
-
+      } else {
+        return (
+          <p className="pg-profile-page__level-verification__name">
+            <FormattedMessage id={`${text}.unverified.title`}/>
+          </p>
+        );
+      }
     }
 
-    getLevelsClassNames(currentLevel, targetLevel) {
-
+    private getLevelsClassNames(currentLevel: number, targetLevel: number) {
         const levelSatisfied = currentLevel >= targetLevel;
 
         const levelClassName = cn({
-
             'pg-profile-page__text-purple': levelSatisfied,
-
         });
-
         const titleClassName = cn('pg-profile-page__ml-gap', {
-
             'pg-profile-page__text-success': levelSatisfied,
-
         });
 
         return { levelClassName, titleClassName };
-
     }
-
 }
 
 const mapStateToProps = state => ({
-
     user: selectUserInfo(state),
-
     label: selectLabelData(state),
-
 });
 
-const mapDispatchProps = dispatch => ({
-
-    labelFetch: () => dispatch(labelFetch()),
-
-});
+const mapDispatchProps: MapDispatchToPropsFunction<DispatchProps, {}> =
+    dispatch => ({
+        labelFetch: () => dispatch(labelFetch()),
+    });
 
 const ProfileVerification = connect(mapStateToProps, mapDispatchProps)(ProfileVerificationComponent);
 
-export { ProfileVerification, };
+export {
+    ProfileVerification,
+};
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/containers/ProfileVerification/index.tsx
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/ProfileVerification/index.tsx
