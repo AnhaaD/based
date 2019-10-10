@@ -1,20 +1,35 @@
 import { applyMiddleware, compose, createStore } from 'redux';
-
 import createSagaMiddleware from 'redux-saga';
-
 import { rootReducer } from './modules';
 
 const sagaMiddleware = createSagaMiddleware();
-
 const rangerMiddleware = createSagaMiddleware();
 
-
-
-const composeEnhancer = window
-
+// tslint:disable-next-line:no-any
+const composeEnhancer: typeof compose = (window as any)
     .__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(rootReducer, composeEnhancer(applyMiddleware(sagaMiddleware, rangerMiddleware)));
+const store = createStore(
+    rootReducer,
+    composeEnhancer(
+        applyMiddleware(
+            sagaMiddleware,
+            rangerMiddleware,
+        ),
+    ),
+);
 
-export { store, sagaMiddleware, rangerMiddleware, };
+export {
+    store,
+    sagaMiddleware,
+    rangerMiddleware,
+};
 
+
+// WEBPACK FOOTER //
+// src/drone/src/src/store.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/store.ts
