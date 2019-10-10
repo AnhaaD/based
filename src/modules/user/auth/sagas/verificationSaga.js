@@ -1,35 +1,29 @@
+// tslint:disable-next-line
 import { call, put } from 'redux-saga/effects';
-
-import { API } from '../../../../api';
-
+import { API, RequestOptions } from '../../../../api';
 import { alertPush } from '../../../public/alert';
+import { signUpError, VerificationFetch, verificationSuccess } from '../actions';
 
-import { signUpError, verificationSuccess } from '../actions';
-
-const verificationConfig = {
-
+const verificationConfig: RequestOptions = {
     apiVersion: 'barong',
-
 };
 
-export function* verificationSaga(action) {
-
+export function* verificationSaga(action: VerificationFetch) {
     try {
-
         yield call(API.post(verificationConfig), '/identity/users/email/confirm_code', action.payload);
-
         yield put(verificationSuccess());
-
-        yield put(alertPush({ message: ['success.email.confirmed'], type: 'success' }));
-
-    }
-
-    catch (error) {
-
+        yield put(alertPush({message: ['success.email.confirmed'], type: 'success'}));
+    } catch (error) {
         yield put(signUpError(error));
-
-        yield put(alertPush({ message: error.message, code: error.code, type: 'error' }));
-
+        yield put(alertPush({message: error.message, code: error.code, type: 'error'}));
     }
-
 }
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/auth/sagas/verificationSaga.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/auth/sagas/verificationSaga.ts
