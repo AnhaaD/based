@@ -1,32 +1,64 @@
-import { ORDER_EXECUTE_DATA, ORDER_EXECUTE_ERROR, ORDER_EXECUTE_FETCH, ORDERS_SET_CURRENT_PRICE, } from './constants';
+import { CommonError, OrderSide } from '../../types';
+import {
+    ORDER_EXECUTE_DATA,
+    ORDER_EXECUTE_ERROR,
+    ORDER_EXECUTE_FETCH,
+    ORDERS_SET_CURRENT_PRICE,
+} from './constants';
 
-export const orderExecuteFetch = (payload) => ({
+export interface OrderExecution {
+    market: string;
+    side: OrderSide;
+    volume: string;
+    price?: string;
+    ord_type?: string;
+}
 
-    type: ORDER_EXECUTE_FETCH,
+export interface OrderExecuteFetch {
+    type: typeof ORDER_EXECUTE_FETCH;
+    payload: OrderExecution;
+}
 
-    payload,
+export interface OrderExecuteData {
+    type: typeof ORDER_EXECUTE_DATA;
+}
 
-});
+export interface OrderExecuteError {
+    type: typeof ORDER_EXECUTE_ERROR;
+    payload: CommonError;
+}
 
-export const orderExecuteData = () => ({
+export interface SetCurrentPrice {
+  type: typeof ORDERS_SET_CURRENT_PRICE;
+  payload: string;
+}
 
+export type OrdersAction =
+    OrderExecuteFetch
+    | OrderExecuteData
+    | OrderExecuteError
+    | SetCurrentPrice;
+
+
+export const orderExecuteFetch =
+    (payload: OrderExecuteFetch['payload']): OrderExecuteFetch => ({
+        type: ORDER_EXECUTE_FETCH,
+        payload,
+    });
+
+export const orderExecuteData = (): OrderExecuteData => ({
     type: ORDER_EXECUTE_DATA,
-
 });
 
-export const orderExecuteError = (payload) => ({
+export const orderExecuteError =
+    (payload: OrderExecuteError['payload']): OrderExecuteError => ({
+        type: ORDER_EXECUTE_ERROR,
+        payload,
+    });
 
-    type: ORDER_EXECUTE_ERROR,
-
-    payload,
-
-});
-
-export const setCurrentPrice = (payload) => ({
-
+export const setCurrentPrice =
+  (payload: SetCurrentPrice['payload']): SetCurrentPrice => ({
     type: ORDERS_SET_CURRENT_PRICE,
-
     payload,
-
-});
+  });
 
