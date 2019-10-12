@@ -1,23 +1,40 @@
-export const selectChangePasswordSuccess = (state) => state.user.profile.passwordChange.success;
+import { RootState } from '../..';
+import { Tier, User } from './actions';
 
-export const selectTwoFactorAuthQR = (state) => state.user.profile.twoFactorAuth.url;
+export const selectChangePasswordSuccess = (state: RootState): boolean | undefined =>
+    state.user.profile.passwordChange.success;
 
-export const selectTwoFactorAuthBarcode = (state) => state.user.profile.twoFactorAuth.barcode;
+export const selectTwoFactorAuthQR = (state: RootState): string =>
+    state.user.profile.twoFactorAuth.url;
 
-export const selectTwoFactorAuthSuccess = (state) => state.user.profile.twoFactorAuth.success;
+export const selectTwoFactorAuthBarcode = (state: RootState): string =>
+    state.user.profile.twoFactorAuth.barcode;
 
-export const selectTiersData = (state) => state.user.profile.tiers.tier;
+export const selectTwoFactorAuthSuccess = (state: RootState): boolean | undefined =>
+    state.user.profile.twoFactorAuth.success;
 
-export const selectTiersDisabled = (state) => state.user.profile.tiers.disabled;
+export const selectTiersData = (state: RootState): Tier =>
+    state.user.profile.tiers.tier;
 
-export const selectUserLoggedIn = (state) => {
+export const selectTiersDisabled = (state: RootState): boolean =>
+    state.user.profile.tiers.disabled;
 
+export const selectUserLoggedIn = (state: RootState): boolean => {
     const { user: { profile } } = state;
-
     return !profile.userData.isFetching && profile.userData.user.state === 'active';
-
 };
 
-export const selectUserInfo = (state) => state.user.profile.userData.user;
+export const selectUserInfo = (state: RootState): User =>
+    state.user.profile.userData.user;
 
-export const selectUserFetching = (state) => state.user.profile.userData.isFetching;
+export const selectUserFetching = (state: RootState): boolean =>
+    state.user.profile.userData.isFetching;
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/profile/selectors.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/profile/selectors.ts
