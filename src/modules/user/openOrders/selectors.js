@@ -1,5 +1,14 @@
-export const selectOpenOrdersList = (state) => state.user.openOrders.list;
+import { RootState } from '../../index';
+import { OrderCommon } from '../../types';
 
-export const selectOpenOrdersFetching = (state) => state.user.openOrders.fetching;
+export const selectOpenOrdersList = (state: RootState): OrderCommon[] =>
+    state.user.openOrders.list;
 
-export const selectCancelOpenOrdersFetching = (state) => state.user.openOrders.cancelFetching;
+export const selectOpenOrdersFetching = (state: RootState): boolean =>
+    state.user.openOrders.fetching;
+
+
+export const selectCancelOpenOrdersFetching = (state: RootState): boolean =>
+    state.user.openOrders.cancelFetching;
+
+
