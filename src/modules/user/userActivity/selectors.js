@@ -1,29 +1,40 @@
-export const selectUserActivity = (state) => state.user.userActivity.list;
+import { RootState } from '../../';
 
-export const selectTotalNumber = (state) => state.user.userActivity.total;
+export const selectUserActivity = (state: RootState) =>
+    state.user.userActivity.list;
 
-export const selectUserActivityCurrentPage = (state) => state.user.userActivity.page;
+export const selectTotalNumber = (state: RootState): number =>
+    state.user.userActivity.total;
 
-export const selectUserActivityPageCount = (state, limit) => Math.ceil(state.user.userActivity.total / limit);
+export const selectUserActivityCurrentPage = (state: RootState): number =>
+    state.user.userActivity.page;
 
-export const selectUserActivityFirstElemIndex = (state, limit) => (state.user.userActivity.page * limit) + 1;
 
-export const selectUserActivityLastElemIndex = (state, limit) => {
+export const selectUserActivityPageCount = (state: RootState, limit): number =>
+    Math.ceil(state.user.userActivity.total / limit);
 
+export const selectUserActivityFirstElemIndex = (state: RootState, limit): number =>
+    (state.user.userActivity.page * limit) + 1;
+
+export const selectUserActivityLastElemIndex = (state: RootState, limit: number): number => {
     if ((state.user.userActivity.page * limit) + limit > selectTotalNumber(state)) {
-
         return selectTotalNumber(state);
-
-    }
-
-    else {
-
+    } else {
         return (state.user.userActivity.page * limit) + limit;
-
     }
-
 };
 
-export const selectUserActivityNextPageExists = (state, limit) => (state.user.userActivity.page + 1) < selectUserActivityPageCount(state, limit);
+export const selectUserActivityNextPageExists = (state: RootState, limit: number): boolean =>
+    (state.user.userActivity.page + 1) < selectUserActivityPageCount(state, limit);
 
-export const selectUserActivityLoading = (state) => state.user.userActivity.loading;
+export const selectUserActivityLoading = (state: RootState): boolean =>
+    state.user.userActivity.loading;
+
+
+// WEBPACK FOOTER //
+// src/drone/src/src/modules/user/userActivity/selectors.ts
+
+
+
+// WEBPACK FOOTER //
+// ./src/modules/user/userActivity/selectors.ts
