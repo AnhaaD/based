@@ -1,3 +1,8 @@
-export const selectForgotPasswordSuccess = (state) => state.user.password.forgotPasswordRequested;
+import { RootState } from '../../';
+import { PasswordState } from './reducer';
 
-export const selectChangeForgotPasswordSuccess = (state) => state.user.password.forgotPasswordChanged;
+export const selectForgotPasswordSuccess = (state: RootState): PasswordState['forgotPasswordRequested'] =>
+    state.user.password.forgotPasswordRequested;
+
+export const selectChangeForgotPasswordSuccess = (state: RootState): PasswordState['forgotPasswordChanged'] =>
+    state.user.password.forgotPasswordChanged;
